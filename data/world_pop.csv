@@ -1,0 +1,263 @@
+;Country Name;Country Code;Year;Value
+56;arab world;arb;2016;406452690.0
+113;caribbean small states;css;2016;7245472.0
+170;central europe and the baltics;ceb;2016;102974082.0
+227;early-demographic dividend;ear;2016;3170542188.0
+284;east asia & pacific;eas;2016;2296786207.0
+341;east asia & pacific (excluding high income);eap;2016;2051431154.0
+398;east asia & pacific (ida & ibrd countries);tea;2016;2026028438.0
+455;euro area;emu;2016;340894606.0
+512;europe & central asia;ecs;2016;911995305.0
+569;europe & central asia (excluding high income);eca;2016;417424643.0
+626;europe & central asia (ida & ibrd countries);tec;2016;455372659.0
+683;european union;euu;2016;511497415.0
+740;fragile and conflict affected situations;fcs;2016;505635987.0
+797;heavily indebted poor countries (hipc);hpc;2016;744602976.0
+854;high income;hic;2016;1190029421.0
+911;ibrd only;ibd;2016;4697247117.0
+968;ida & ibrd total;ibt;2016;6271593092.0
+1025;ida blend;idb;2016;521159393.0
+1082;ida only;idx;2016;1053186582.0
+1139;ida total;ida;2016;1574345975.0
+1196;late-demographic dividend;lte;2016;2262709895.0
+1253;latin america & caribbean;lcn;2016;637664490.0
+1310;latin america & caribbean (excluding high income);lac;2016;610136397.0
+1367;latin america & the caribbean (ida & ibrd countries);tla;2016;621534921.0
+1424;least developed countries: un classification;ldc;2016;979387925.0
+1481;low & middle income;lmy;2016;6252106157.0
+1538;low income;lic;2016;659272676.0
+1595;lower middle income;lmc;2016;3012923806.0
+1652;middle east & north africa;mea;2016;436720722.0
+1709;middle east & north africa (excluding high income);mna;2016;373719055.0
+1766;middle east & north africa (ida & ibrd countries);tmn;2016;369167489.0
+1823;middle income;mic;2016;5592833481.0
+1880;north america;nac;2016;359479269.0
+1937;oecd members;oed;2016;1289937319.0
+1994;other small states;oss;2016;29983809.0
+2051;pacific island small states;pss;2016;2388875.0
+2108;post-demographic dividend;pst;2016;1102730983.0
+2165;pre-demographic dividend;pre;2016;879292453.0
+2222;small states;sst;2016;39618156.0
+2279;south asia;sas;2016;1766383450.0
+2336;south asia (ida & ibrd);tsa;2016;1766383450.0
+2393;sub-saharan africa;ssf;2016;1033106135.0
+2450;sub-saharan africa (excluding high income);ssa;2016;1033011458.0
+2507;sub-saharan africa (ida & ibrd countries);tss;2016;1033106135.0
+2564;upper middle income;umc;2016;2579909675.0
+2621;world;wld;2016;7442135578.0
+2678;afghanistan;afg;2016;34656032.0
+2735;albania;alb;2016;2876101.0
+2792;algeria;dza;2016;40606052.0
+2849;american samoa;asm;2016;55599.0
+2906;andorra;and;2016;77281.0
+2963;angola;ago;2016;28813463.0
+3020;antigua and barbuda;atg;2016;100963.0
+3077;argentina;arg;2016;43847430.0
+3134;armenia;arm;2016;2924816.0
+3191;aruba;abw;2016;104822.0
+3248;australia;aus;2016;24127159.0
+3305;austria;aut;2016;8747358.0
+3362;azerbaijan;aze;2016;9762274.0
+3419;bahamas, the;bhs;2016;391232.0
+3476;bahrain;bhr;2016;1425171.0
+3533;bangladesh;bgd;2016;162951560.0
+3590;barbados;brb;2016;284996.0
+3647;belarus;blr;2016;9507120.0
+3704;belgium;bel;2016;11348159.0
+3761;belize;blz;2016;366954.0
+3818;benin;ben;2016;10872298.0
+3875;bermuda;bmu;2016;65331.0
+3932;bhutan;btn;2016;797765.0
+3989;bolivia;bol;2016;10887882.0
+4046;bosnia and herzegovina;bih;2016;3516816.0
+4103;botswana;bwa;2016;2250260.0
+4160;brazil;bra;2016;207652865.0
+4217;british virgin islands;vgb;2016;30661.0
+4274;brunei darussalam;brn;2016;423196.0
+4331;bulgaria;bgr;2016;7127822.0
+4388;burkina faso;bfa;2016;18646433.0
+4445;burundi;bdi;2016;10524117.0
+4502;cabo verde;cpv;2016;539560.0
+4559;cambodia;khm;2016;15762370.0
+4616;cameroon;cmr;2016;23439189.0
+4673;canada;can;2016;36286425.0
+4730;cayman islands;cym;2016;60765.0
+4787;central african republic;caf;2016;4594621.0
+4844;chad;tcd;2016;14452543.0
+4901;channel islands;chi;2016;164541.0
+4958;chile;chl;2016;17909754.0
+5015;china;chn;2016;1378665000.0
+5072;colombia;col;2016;48653419.0
+5129;comoros;com;2016;795601.0
+5186;congo, dem. rep.;cod;2016;78736153.0
+5243;congo, rep.;cog;2016;5125821.0
+5300;costa rica;cri;2016;4857274.0
+5357;cote d'ivoire;civ;2016;23695919.0
+5414;croatia;hrv;2016;4170600.0
+5471;cuba;cub;2016;11475982.0
+5528;curacao;cuw;2016;159999.0
+5585;cyprus;cyp;2016;1170125.0
+5642;czech republic;cze;2016;10561633.0
+5699;denmark;dnk;2016;5731118.0
+5756;djibouti;dji;2016;942333.0
+5813;dominica;dma;2016;73543.0
+5870;dominican republic;dom;2016;10648791.0
+5927;ecuador;ecu;2016;16385068.0
+5984;egypt, arab rep.;egy;2016;95688681.0
+6041;el salvador;slv;2016;6344722.0
+6098;equatorial guinea;gnq;2016;1221490.0
+6207;estonia;est;2016;1316481.0
+6264;ethiopia;eth;2016;102403196.0
+6321;faroe islands;fro;2016;49117.0
+6378;fiji;fji;2016;898760.0
+6435;finland;fin;2016;5495096.0
+6492;france;fra;2016;66896109.0
+6549;french polynesia;pyf;2016;280208.0
+6606;gabon;gab;2016;1979786.0
+6663;gambia, the;gmb;2016;2038501.0
+6720;georgia;geo;2016;3719300.0
+6777;germany;deu;2016;82667685.0
+6834;ghana;gha;2016;28206728.0
+6891;gibraltar;gib;2016;34408.0
+6948;greece;grc;2016;10746740.0
+7005;greenland;grl;2016;56186.0
+7062;grenada;grd;2016;107317.0
+7119;guam;gum;2016;162896.0
+7176;guatemala;gtm;2016;16582469.0
+7233;guinea;gin;2016;12395924.0
+7290;guinea-bissau;gnb;2016;1815698.0
+7347;guyana;guy;2016;773303.0
+7404;haiti;hti;2016;10847334.0
+7461;honduras;hnd;2016;9112867.0
+7518;hong kong sar, china;hkg;2016;7346700.0
+7575;hungary;hun;2016;9817958.0
+7632;iceland;isl;2016;334252.0
+7689;india;ind;2016;1324171354.0
+7746;indonesia;idn;2016;261115456.0
+7803;iran, islamic rep.;irn;2016;80277428.0
+7860;iraq;irq;2016;37202572.0
+7917;ireland;irl;2016;4773095.0
+7974;isle of man;imn;2016;83737.0
+8031;israel;isr;2016;8547100.0
+8088;italy;ita;2016;60600590.0
+8145;jamaica;jam;2016;2881355.0
+8202;japan;jpn;2016;126994511.0
+8259;jordan;jor;2016;9455802.0
+8316;kazakhstan;kaz;2016;17797032.0
+8373;kenya;ken;2016;48461567.0
+8430;kiribati;kir;2016;114395.0
+8487;korea, dem. people’s rep.;prk;2016;25368620.0
+8544;korea, rep.;kor;2016;51245707.0
+8601;kosovo;xkx;2016;1816200.0
+8655;kuwait;kwt;2016;4052584.0
+8712;kyrgyz republic;kgz;2016;6082700.0
+8769;lao pdr;lao;2016;6758353.0
+8826;latvia;lva;2016;1960424.0
+8883;lebanon;lbn;2016;6006668.0
+8940;lesotho;lso;2016;2203821.0
+8997;liberia;lbr;2016;4613823.0
+9054;libya;lby;2016;6293253.0
+9111;liechtenstein;lie;2016;37666.0
+9168;lithuania;ltu;2016;2872298.0
+9225;luxembourg;lux;2016;582972.0
+9282;macao sar, china;mac;2016;612167.0
+9339;macedonia, fyr;mkd;2016;2081206.0
+9396;madagascar;mdg;2016;24894551.0
+9453;malawi;mwi;2016;18091575.0
+9510;malaysia;mys;2016;31187265.0
+9567;maldives;mdv;2016;417492.0
+9624;mali;mli;2016;17994837.0
+9681;malta;mlt;2016;436947.0
+9738;marshall islands;mhl;2016;53066.0
+9795;mauritania;mrt;2016;4301018.0
+9852;mauritius;mus;2016;1263473.0
+9909;mexico;mex;2016;127540423.0
+9966;micronesia, fed. sts.;fsm;2016;104937.0
+10023;moldova;mda;2016;3552000.0
+10080;monaco;mco;2016;38499.0
+10137;mongolia;mng;2016;3027398.0
+10194;montenegro;mne;2016;622781.0
+10251;morocco;mar;2016;35276786.0
+10308;mozambique;moz;2016;28829476.0
+10365;myanmar;mmr;2016;52885223.0
+10422;namibia;nam;2016;2479713.0
+10479;nauru;nru;2016;13049.0
+10536;nepal;npl;2016;28982771.0
+10593;netherlands;nld;2016;17018408.0
+10650;new caledonia;ncl;2016;278000.0
+10707;new zealand;nzl;2016;4692700.0
+10764;nicaragua;nic;2016;6149928.0
+10821;niger;ner;2016;20672987.0
+10878;nigeria;nga;2016;185989640.0
+10935;northern mariana islands;mnp;2016;55023.0
+10992;norway;nor;2016;5232929.0
+11049;oman;omn;2016;4424762.0
+11106;pakistan;pak;2016;193203476.0
+11163;palau;plw;2016;21503.0
+11220;panama;pan;2016;4034119.0
+11277;papua new guinea;png;2016;8084991.0
+11334;paraguay;pry;2016;6725308.0
+11391;peru;per;2016;31773839.0
+11448;philippines;phl;2016;103320222.0
+11505;poland;pol;2016;37948016.0
+11562;portugal;prt;2016;10324611.0
+11619;puerto rico;pri;2016;3411307.0
+11676;qatar;qat;2016;2569804.0
+11733;romania;rou;2016;19705301.0
+11790;russian federation;rus;2016;144342396.0
+11847;rwanda;rwa;2016;11917508.0
+11904;samoa;wsm;2016;195125.0
+11961;san marino;smr;2016;33203.0
+12018;sao tome and principe;stp;2016;199910.0
+12075;saudi arabia;sau;2016;32275687.0
+12132;senegal;sen;2016;15411614.0
+12159;serbia;srb;2016;7057412.0
+12216;seychelles;syc;2016;94677.0
+12273;sierra leone;sle;2016;7396190.0
+12330;singapore;sgp;2016;5607283.0
+12349;sint maarten (dutch part);sxm;2016;40005.0
+12406;slovak republic;svk;2016;5428704.0
+12463;slovenia;svn;2016;2064845.0
+12520;solomon islands;slb;2016;599419.0
+12577;somalia;som;2016;14317996.0
+12634;south africa;zaf;2016;55908865.0
+12691;south sudan;ssd;2016;12230730.0
+12748;spain;esp;2016;46443959.0
+12805;sri lanka;lka;2016;21203000.0
+12862;st. kitts and nevis;kna;2016;54821.0
+12919;st. lucia;lca;2016;178015.0
+12976;st. martin (french part);maf;2016;31949.0
+13033;st. vincent and the grenadines;vct;2016;109643.0
+13090;sudan;sdn;2016;39578828.0
+13147;suriname;sur;2016;558368.0
+13204;swaziland;swz;2016;1343098.0
+13261;sweden;swe;2016;9903122.0
+13318;switzerland;che;2016;8372098.0
+13375;syrian arab republic;syr;2016;18430453.0
+13432;tajikistan;tjk;2016;8734951.0
+13489;tanzania;tza;2016;55572201.0
+13546;thailand;tha;2016;68863514.0
+13603;timor-leste;tls;2016;1268671.0
+13660;togo;tgo;2016;7606374.0
+13717;tonga;ton;2016;107122.0
+13774;trinidad and tobago;tto;2016;1364962.0
+13831;tunisia;tun;2016;11403248.0
+13888;turkey;tur;2016;79512426.0
+13945;turkmenistan;tkm;2016;5662544.0
+14002;turks and caicos islands;tca;2016;34900.0
+14059;tuvalu;tuv;2016;11097.0
+14116;uganda;uga;2016;41487965.0
+14173;ukraine;ukr;2016;45004645.0
+14230;united arab emirates;are;2016;9269612.0
+14287;united kingdom;gbr;2016;65637239.0
+14344;united states;usa;2016;323127513.0
+14401;uruguay;ury;2016;3444006.0
+14458;uzbekistan;uzb;2016;31848200.0
+14515;vanuatu;vut;2016;270402.0
+14572;venezuela, rb;ven;2016;31568179.0
+14629;vietnam;vnm;2016;92701100.0
+14686;virgin islands (u.s.);vir;2016;102951.0
+14713;west bank and gaza;pse;2016;4551566.0
+14770;yemen, rep.;yem;2016;27584213.0
+14827;zambia;zmb;2016;16591390.0
+14884;zimbabwe;zwe;2016;16150362.0
