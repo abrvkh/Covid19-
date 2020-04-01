@@ -26,7 +26,7 @@ def compute_distances(current_pos, positions):
 ##SIMULATION PARAMETERS
 L = 1 #domain length and domain height
 L_repel = 0.05 #this is the band in which particles are repelled from the boundary
-N = 100 #population size
+N = 500 #population size
 N_infected = 1 #number of initially infected people (should be smaller than N)
 N_clean = N-N_infected #number of people that did not get the virus yet
 N_immune = 0 #number of people that are immune
@@ -55,8 +55,6 @@ particle_infectiontime = np.zeros(N) #indicates the time of when the particle wa
 #social distancing
 particle_social_distancing = np.zeros(N) #array which indicates if a particle does social distancing (0=no, 1=yes)
 particle_social_distancing[random.sample(range(0, N), np.int(np.round(social_distancing_percentage*N)))] = 1
-
-print(particle_social_distancing)
 
 #INFECT FIRST PARTICLES
 for i in range(0, N_infected):
