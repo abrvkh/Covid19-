@@ -36,18 +36,24 @@ timesteps = 1000 #number of timesteps to take
 velocity_scaling=1 #this is the factor which we multiply with the velocity [-1, 1]
 
 ##INFECTION PARAMETERS
-infection_radius = 0.1 #people might get infected when they come within this distance of a infected particel
-infection_probability = 0.02 #change of getting infected when within the radius
-infection_time = 1 #time a person will be infected
+infection_radius = 0.05 #people might get infected when they come within this distance of a infected particel
+infection_probability = 0.1 #change of getting infected when within the radius
+infection_time = 2 #time a person will be infected
 
-#SOCIAL DISTANCEING
-social_distance_radius = 0.1;
+#SOCIAL DISTANCE PARAMETERS
+social_distance_radius = 0.1; #the radius in which the social distancing kicks in
+social_distance_probability = 1; #the probability that a person obeys the social distancing law
+social_distancing_percentage = 0.5; #fraction of people that obeys the social distancing law
 
 #INITIALISE PARTICLES
 particle_pos = L*np.random.rand(N, 2) #positions
 particle_vel = 2*(np.random.rand(N, 2)-0.5) #movement velocity
+#infection related
 particle_infected = np.zeros(N, dtype=np.int) #indicates if a particle is infected or not (0=not infected, 1=infected, 2=immune)
 particle_infectiontime = np.zeros(N) #indicates the time of when the particle was infected
+#social distancing
+particle_social_distancing = np.zeros(N) #array which indicates if a particle does social distancing (0=no, 1=yes)
+particle_social_distancing[np.random.randint(0, N, np.int(np.round(social_distancing_percentage*N)))] = 1
 
 #INFECT FIRST PARTICLES
 for i in range(0, N_infected):
@@ -87,15 +93,17 @@ for it in range(1, timesteps+1): #time loop
 
         #repulsive force (social distancing)
         if social_distance_radius>0:
-            particle_dist = compute_distances(current_pos, particle_pos) #compute the distance between the current particle and the remaining particles
-            particle_dist[particle_dist==0] = L #set the distance between itself to a large value
-            close_particles_indices = np.where(particle_dist<social_distance_radius)[0]
-            for j in close_particles_indices: #loop over all close particles to add a force
-                vector = particle_pos[j] - current_pos #vector of the repulsive force
-                norm = particle_dist[j] #this is the distance from the particle
-                repulsion_force -= vector/(norm**3)
-            if np.linalg.norm(repulsion_force, ord=2)>0:
-                new_vel += repulsion_force/np.linalg.norm(repulsion_force, ord=2)
+            if particle_social_distancing[i]==1: #check if this particle obeys the social distancing physics
+                if np.random.rand()<social_distance_probability: #check if he follows the law this time
+                    particle_dist = compute_distances(current_pos, particle_pos) #compute the distance between the current particle and the remaining particles
+                    particle_dist[particle_dist==0] = L #set the distance between itself to a large value
+                    close_particles_indices = np.where(particle_dist<social_distance_radius)[0]
+                    for j in close_particles_indices: #loop over all close particles to add a force
+                        vector = particle_pos[j] - current_pos #vector of the repulsive force
+                        norm = particle_dist[j] #this is the distance from the particle
+                        repulsion_force -= vector/(norm**3)
+                    if np.linalg.norm(repulsion_force, ord=2)>0:
+                        new_vel += repulsion_force/np.linalg.norm(repulsion_force, ord=2)
 
         #wall force (keep particles away from the boundaries of the domain)
         if current_pos[0] < L_repel:
