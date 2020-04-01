@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 ############################################FUNCTIONS###########################################
 #2D RANDOM WALK
@@ -43,7 +44,7 @@ infection_time = 2 #time a person will be infected
 #SOCIAL DISTANCE PARAMETERS
 social_distance_radius = 0.1; #the radius in which the social distancing kicks in
 social_distance_probability = 1; #the probability that a person obeys the social distancing law
-social_distancing_percentage = 0.5; #fraction of people that obeys the social distancing law
+social_distancing_percentage = 1; #fraction of people that obeys the social distancing law
 
 #INITIALISE PARTICLES
 particle_pos = L*np.random.rand(N, 2) #positions
@@ -53,7 +54,9 @@ particle_infected = np.zeros(N, dtype=np.int) #indicates if a particle is infect
 particle_infectiontime = np.zeros(N) #indicates the time of when the particle was infected
 #social distancing
 particle_social_distancing = np.zeros(N) #array which indicates if a particle does social distancing (0=no, 1=yes)
-particle_social_distancing[np.random.randint(0, N, np.int(np.round(social_distancing_percentage*N)))] = 1
+particle_social_distancing[random.sample(range(0, N), np.int(np.round(social_distancing_percentage*N)))] = 1
+
+print(particle_social_distancing)
 
 #INFECT FIRST PARTICLES
 for i in range(0, N_infected):
@@ -100,7 +103,7 @@ for it in range(1, timesteps+1): #time loop
                     close_particles_indices = np.where(particle_dist<social_distance_radius)[0]
                     for j in close_particles_indices: #loop over all close particles to add a force
                         vector = particle_pos[j] - current_pos #vector of the repulsive force
-                        norm = particle_dist[j] #this is the distance from the particle
+                        norm = social_distance_radius*particle_dist[j] #this is the distance from the particle
                         repulsion_force -= vector/(norm**3)
                     if np.linalg.norm(repulsion_force, ord=2)>0:
                         new_vel += repulsion_force/np.linalg.norm(repulsion_force, ord=2)
