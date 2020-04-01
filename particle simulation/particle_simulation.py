@@ -24,16 +24,20 @@ def compute_distances(current_pos, positions):
 #####################################################SIMULATION######################################################
 ##SIMULATION PARAMETERS
 L = 1 #domain length and domain height
-L_repel = 0.1 #this is the band in which particles are repelled from the boundary
-N = 10 #population size
-N_infected = 5 #number of initially infected people (should be smaller than N)
+L_repel = 0.05 #this is the band in which particles are repelled from the boundary
+N = 100 #population size
+N_infected = 1 #number of initially infected people (should be smaller than N)
 N_clean = N-N_infected #number of people that did not get the virus yet
 N_immune = 0 #number of people that are immune
 dt = 0.01 #time-step
+timesteps = 1000 #number of timesteps to take
+
+##VELOCITY
+velocity_scaling=1 #this is the factor which we multiply with the velocity [-1, 1]
 
 ##INFECTION PARAMETERS
 infection_radius = 0.1 #people might get infected when they come within this distance of a infected particel
-infection_probability = 0.01 #change of getting infected when within the radius
+infection_probability = 0.02 #change of getting infected when within the radius
 infection_time = 1 #time a person will be infected
 
 #SOCIAL DISTANCEING
@@ -51,16 +55,26 @@ for i in range(0, N_infected):
     particle_infected[index] = 1 #this particle is infected
 
 #PLOT PARTICLES
+fig, (ax1, ax2) = plt.subplots(1, 2)
 plotcounter = 1 #plot every "plotcounter" frames
-color_scheme = np.array(['blue', 'red', 'yellow']) #(clean, infected, immune) particle colours
-scatter_plot = plt.scatter(particle_pos[:, 0], particle_pos[:, 1])
+#plot of the particles
+color_scheme = np.array(['blue', 'red', 'green']) #(clean, infected, immune) particle colours
+scatter_plot = ax1.scatter(particle_pos[:, 0], particle_pos[:, 1])
 scatter_plot.set_sizes(10*np.ones(np.size(particle_pos, 1)))
 scatter_plot.set_facecolor(color_scheme[particle_infected])
 scatter_plot.set_edgecolor(color_scheme[particle_infected])
-plt.axis([0, L, 0, L])
+ax1.axis([0, L, 0, L])
+#plot of the SIR population
+xSIR = np.arange(0, timesteps+1, 1) #[0, 1, 2, 3, 4, 5, 6, ...]
+yS = np.zeros(timesteps+1) #number of susceptible people
+yI = yS*1 #number of infected people over time
+yR = yS*1 #number of immune people over time
+yS[0] = N_clean
+yI[0] = N_infected
+yR[0] = N_immune
 
 #TIME-LOOP
-for it in range(1, 2000): #time loop
+for it in range(1, timesteps+1): #time loop
 
     #NEW POSITIONS
     for i in range(0, N): #loop over all particles to change position
@@ -72,15 +86,16 @@ for it in range(1, 2000): #time loop
         new_vel = randomwalk_step(current_pos, current_vel, dt)
 
         #repulsive force (social distancing)
-        particle_dist = compute_distances(current_pos, particle_pos) #compute the distance between the current particle and the remaining particles
-        particle_dist[particle_dist==0] = L #set the distance between itself to a large value
-        close_particles_indices = np.where(particle_dist<social_distance_radius)[0]
-        for j in close_particles_indices: #loop over all close particles to add a force
-            vector = particle_pos[j] - current_pos #vector of the repulsive force
-            norm = particle_dist[j] #this is the distance from the particle
-            repulsion_force -= 0.001*vector/(norm**3)
-
-        new_vel += repulsion_force
+        if social_distance_radius>0:
+            particle_dist = compute_distances(current_pos, particle_pos) #compute the distance between the current particle and the remaining particles
+            particle_dist[particle_dist==0] = L #set the distance between itself to a large value
+            close_particles_indices = np.where(particle_dist<social_distance_radius)[0]
+            for j in close_particles_indices: #loop over all close particles to add a force
+                vector = particle_pos[j] - current_pos #vector of the repulsive force
+                norm = particle_dist[j] #this is the distance from the particle
+                repulsion_force -= vector/(norm**3)
+            if np.linalg.norm(repulsion_force, ord=2)>0:
+                new_vel += repulsion_force/np.linalg.norm(repulsion_force, ord=2)
 
         #wall force (keep particles away from the boundaries of the domain)
         if current_pos[0] < L_repel:
@@ -94,9 +109,13 @@ for it in range(1, 2000): #time loop
         if (L - current_pos[1]) < L_repel:
             new_vel[1] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative y-direction
 
-        particle_vel[i, :] = new_vel
+        particle_vel[i, :] = velocity_scaling*new_vel
 
+    #update particle positions
     particle_pos += dt*particle_vel
+
+    #keep particles inside the domain
+    particle_pos = np.clip(particle_pos, [0, 0], [L, L])
 
     #NEW INFECTIONS
     infected_indices = np.where(particle_infected == 1)[0] #currently infected people
@@ -107,17 +126,34 @@ for it in range(1, 2000): #time loop
         new_infected_indices = in_danger_indices[np.random.rand(np.size(in_danger_indices)) < infection_probability] #these are the indices of particles that are infected
         particle_infected[new_infected_indices] = 1 #set these particles to infected
         particle_infectiontime[new_infected_indices] = it*dt #set the infection time to the current timelevel
+        N_infected += np.size(new_infected_indices) #update the number of infected people
+        N_clean -= np.size(new_infected_indices) #update the number of clean people
 
     #NEW IMMUNE PEOPLE
     infected_particles = np.where(particle_infected==1)[0]
     new_immune_indices = infected_particles[np.where(it*dt - particle_infectiontime[infected_particles] > infection_time)[0]] #these are the infected people that are infected for a while
     particle_infected[new_immune_indices] = 2 #set these particles to immune
+    N_infected -= np.size(new_immune_indices)  # update the number of infected people
+    N_immune += np.size(new_immune_indices)  # update the number of infected people
+
+    #UPDATE PLOT VARIABLES
+    yS[it] = N_clean
+    yI[it] = N_infected
+    yR[it] = N_immune
 
     # #plot particle positions
     if it%plotcounter==0:
+        #plot particles
         scatter_plot.set_offsets(particle_pos)
         scatter_plot.set_facecolor(color_scheme[particle_infected])
         scatter_plot.set_edgecolor(color_scheme[particle_infected])
+        #plot SIR graph
+        ax2.cla()
+        Iplot = ax2.fill_between(xSIR, 0, yI, color=color_scheme[1])
+        Splot = ax2.fill_between(xSIR, yI, yI + yS, color=color_scheme[0])
+        Rplot = ax2.fill_between(xSIR, yI + yS, yI + yS + yR, color=color_scheme[2])
+        ax2.axis([0, it, 0, N+1])
+
         plt.show()
         plt.pause(0.001)
 
