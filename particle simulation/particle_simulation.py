@@ -31,7 +31,7 @@ N_infected = 1 #number of initially infected people (should be smaller than N)
 N_clean = N-N_infected #number of people that did not get the virus yet
 N_immune = 0 #number of people that are immune
 dt = 0.01 #time-step
-timesteps = 20 #number of timesteps to take
+timesteps = 100 #number of timesteps to take
 
 ##VELOCITY
 velocity_scaling = 1 #this is the factor which we multiply with the velocity [-1, 1]
@@ -48,11 +48,15 @@ social_distancing_percentage = 1 #fraction of people that obeys the social dista
 
 #TESTING PARAMETERS
 test_percentage = 0 #fraction of people that gets tested and if positive he gets isolated
-test_frequency = 1 # how frequent (in terms of nr of time steps) we test
+test_frequency = .1 # how frequent (in terms of nr of time steps) we test
 
 # ISOLATION PARAMETERS
-isolate_percentage = 1 #fraction of infected that gets isolated
+isolate_percentage = .1 #fraction of infected that gets isolated
 isolate_time = 0 # time a person walks around before being isolated
+
+# CENTRAL POINT (SUPERMARKET)
+time_to_go = 0.15 # how often someone goes to supermarket
+supermarket_percentage = .5 # fraction of people that goes to supermarket
 
 #INITIALISE PARTICLES
 particle_pos = L*np.random.rand(N, 2) #positions
@@ -60,6 +64,9 @@ particle_vel = 2*(np.random.rand(N, 2)-0.5) #movement velocity
 #infection related
 particle_infected = np.zeros(N, dtype=np.int) #indicates if a particle is infected or not (0=not infected, 1=infected, 2=immune)
 particle_infectiontime = np.zeros(N) #indicates the time of when the particle was infected
+# shopping related
+shop_pos = np.random.uniform(L/4,3*L/4,2)
+particle_shopping = np.zeros(N) #indicates the time of when the particle went shopping last
 #social distancing
 particle_social_distancing = np.zeros(N) #array which indicates if a particle does social distancing (0=no, 1=yes)
 particle_social_distancing[random.sample(range(0, N), np.int(np.round(social_distancing_percentage*N)))] = 1
@@ -75,6 +82,7 @@ plotcounter = 1 #plot every "plotcounter" frames
 #plot of the particles
 color_scheme = np.array(['blue', 'red', 'green']) #(clean, infected, immune) particle colours
 scatter_plot = ax1.scatter(particle_pos[:, 0], particle_pos[:, 1])
+ax1.plot(shop_pos[0], shop_pos[1], 'mo')
 scatter_plot.set_sizes(10*np.ones(np.size(particle_pos, 1)))
 scatter_plot.set_facecolor(color_scheme[particle_infected])
 scatter_plot.set_edgecolor(color_scheme[particle_infected])
@@ -99,6 +107,13 @@ for it in range(1, timesteps+1): #time loop
 
         #new smooth velocity
         new_vel = randomwalk_step(current_pos, current_vel, dt)
+        # force toward a central position (supermarket)
+        if it*dt - particle_shopping[i] > time_to_go: # if enough time has passed since last time he went shopping
+            if np.random.rand()<supermarket_percentage: # if this particle is indeed going shopping this time
+                vector = shop_pos-current_pos
+                new_vel = vector # if its time to go shopping we move targeted towards shop
+        if np.linalg.norm(current_pos-shop_pos, ord=2) < 0.01: # if he has visited the shop approximately
+            particle_shopping[i] = it*dt
 
         #repulsive force (social distancing)
         if social_distance_radius>0:
