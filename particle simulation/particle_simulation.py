@@ -111,7 +111,7 @@ for it in range(1, timesteps+1): #time loop
                     for j in close_particles_indices: #loop over all close particles to add a force
                         vector = particle_pos[j] - current_pos #vector of the repulsive force
                         norm = social_distance_radius*particle_dist[j] #this is the distance from the particle
-                        repulsion_force -= vector/(norm**3)
+                        repulsion_force -= vector/(norm**3) #why this force?
                     if np.linalg.norm(repulsion_force, ord=2)>0:
                         new_vel += repulsion_force/np.linalg.norm(repulsion_force, ord=2)
 
