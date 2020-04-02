@@ -31,20 +31,28 @@ N_infected = 1 #number of initially infected people (should be smaller than N)
 N_clean = N-N_infected #number of people that did not get the virus yet
 N_immune = 0 #number of people that are immune
 dt = 0.01 #time-step
-timesteps = 1000 #number of timesteps to take
+timesteps = 20 #number of timesteps to take
 
 ##VELOCITY
-velocity_scaling=1 #this is the factor which we multiply with the velocity [-1, 1]
+velocity_scaling = 1 #this is the factor which we multiply with the velocity [-1, 1]
 
 ##INFECTION PARAMETERS
-infection_radius = 0.05 #people might get infected when they come within this distance of a infected particel
+infection_radius = 0.05 #people might get infected when they come within this distance of an infected particle
 infection_probability = 0.1 #change of getting infected when within the radius
-infection_time = 2 #time a person will be infected
+infection_time = 0.14 #time a person will be infected
 
 #SOCIAL DISTANCE PARAMETERS
-social_distance_radius = 0.1; #the radius in which the social distancing kicks in
-social_distance_probability = 1; #the probability that a person obeys the social distancing law
-social_distancing_percentage = 1; #fraction of people that obeys the social distancing law
+social_distance_radius = 0.1 #the radius in which the social distancing kicks in
+social_distance_probability = 1 #the probability that a person obeys the social distancing law
+social_distancing_percentage = 1 #fraction of people that obeys the social distancing law
+
+#TESTING PARAMETERS
+test_percentage = 0 #fraction of people that gets tested and if positive he gets isolated
+test_frequency = 1 # how frequent (in terms of nr of time steps) we test
+
+# ISOLATION PARAMETERS
+isolate_percentage = 1 #fraction of infected that gets isolated
+isolate_time = 0 # time a person walks around before being isolated
 
 #INITIALISE PARTICLES
 particle_pos = L*np.random.rand(N, 2) #positions
@@ -96,6 +104,7 @@ for it in range(1, timesteps+1): #time loop
         if social_distance_radius>0:
             if particle_social_distancing[i]==1: #check if this particle obeys the social distancing physics
                 if np.random.rand()<social_distance_probability: #check if he follows the law this time
+                    # his position change would be dt*new_vel, but we need to make sure that this does not bring him closer to any of the other particles
                     particle_dist = compute_distances(current_pos, particle_pos) #compute the distance between the current particle and the remaining particles
                     particle_dist[particle_dist==0] = L #set the distance between itself to a large value
                     close_particles_indices = np.where(particle_dist<social_distance_radius)[0]
@@ -131,7 +140,7 @@ for it in range(1, timesteps+1): #time loop
     for i in range(0, np.size(infected_indices)):
         infected_pos = particle_pos[infected_indices[i], :] #this is the current position of the infected particle
         in_danger_indices = np.where(np.linalg.norm(particle_pos-infected_pos, ord=2, axis=1) < infection_radius)[0] #find all the particles that are within the infection radius
-        in_danger_indices = in_danger_indices[np.where(particle_infected[in_danger_indices]==0)[0]]#remove the indices of particles that are immune or are already infected
+        in_danger_indices = in_danger_indices[np.where(particle_infected[in_danger_indices]==0)[0]] #remove the indices of particles that are immune or are already infected
         new_infected_indices = in_danger_indices[np.random.rand(np.size(in_danger_indices)) < infection_probability] #these are the indices of particles that are infected
         particle_infected[new_infected_indices] = 1 #set these particles to infected
         particle_infectiontime[new_infected_indices] = it*dt #set the infection time to the current timelevel
@@ -145,12 +154,31 @@ for it in range(1, timesteps+1): #time loop
     N_infected -= np.size(new_immune_indices)  # update the number of infected people
     N_immune += np.size(new_immune_indices)  # update the number of infected people
 
+    # ISOLATE POSITIVES
+    infected_particles = np.where(particle_infected==1)[0]
+    positives_tested = np.zeros(N_infected)
+    positives_tested[:int(isolate_percentage*N_infected)] = 1
+    np.random.shuffle(positives_tested)
+    indices_tested = np.where(positives_tested==1)[0]
+    indices_isolate = np.where(it*dt - particle_infectiontime[infected_particles]>isolate_time)[0]
+    to_isolate = infected_particles[np.intersect1d(indices_tested,indices_isolate)]
+    particle_pos[to_isolate,:] = np.ones(2)*-1 # Remove the isolated particle from the system
+
+
+    # TEST AN AMOUNT OF CITIZENS, AND ISOLATE POSITIVES (this assumes that we don't always know who has the disease and thus cannot guarantee we are testing only the positive ones)
+    if it%test_frequency==0:
+        tested = np.zeros(N)
+        tested[:int(test_percentage*N)]=1
+        np.random.shuffle(tested)
+        indices_to_isolate = np.intersect1d(infected_particles,np.where(tested==1)[0]) # check if this person was actually infected
+        particle_pos[indices_to_isolate,:] = np.ones(2)*-1
+
     #UPDATE PLOT VARIABLES
     yS[it] = N_clean
     yI[it] = N_infected
     yR[it] = N_immune
 
-    # #plot particle positions
+    # plot particle positions
     if it%plotcounter==0:
         #plot particles
         scatter_plot.set_offsets(particle_pos)
@@ -163,7 +191,7 @@ for it in range(1, timesteps+1): #time loop
         Rplot = ax2.fill_between(xSIR, yI + yS, yI + yS + yR, color=color_scheme[2])
         ax2.axis([0, it, 0, N+1])
 
-        plt.show()
+        plt.draw()
         plt.pause(0.001)
 
 
