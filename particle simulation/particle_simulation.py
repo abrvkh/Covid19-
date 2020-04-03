@@ -26,12 +26,12 @@ def compute_distances(current_pos, positions):
 ##SIMULATION PARAMETERS
 L = 1 #domain length and domain height
 L_repel = 0.05 #this is the band in which particles are repelled from the boundary
-N = 500 #population size
+N = 100 #population size
 N_infected = 1 #number of initially infected people (should be smaller than N)
 N_clean = N-N_infected #number of people that did not get the virus yet
 N_immune = 0 #number of people that are immune
 dt = 0.01 #time-step
-timesteps = 100 #number of timesteps to take
+timesteps = 1000 #number of timesteps to take
 
 ##VELOCITY
 velocity_scaling = 1 #this is the factor which we multiply with the velocity [-1, 1]
@@ -64,7 +64,7 @@ particle_vel = 2*(np.random.rand(N, 2)-0.5) #movement velocity
 #infection related
 particle_infected = np.zeros(N, dtype=np.int) #indicates if a particle is infected or not (0=not infected, 1=infected, 2=immune)
 particle_infectiontime = np.zeros(N) #indicates the time of when the particle was infected
-# shopping related
+#shopping related
 shop_pos = np.random.uniform(L/4,3*L/4,2)
 particle_shopping = np.zeros(N) #indicates the time of when the particle went shopping last
 #social distancing
