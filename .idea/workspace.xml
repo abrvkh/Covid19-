@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="50812531-6c75-4925-9dc1-3056c7eb16de" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Covid19-.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Covid19-.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/particle simulation/particle_simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/particle simulation/particle_simulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/particle simulation/vispy_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/particle simulation/vispy_test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,23 +12,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/particle simulation/particle_simulation.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="190" column="4" selection-start-line="190" selection-start-column="4" selection-end-line="193" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/particle simulation/vispy_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="206" column="67" lean-forward="true" selection-start-line="206" selection-start-column="67" selection-end-line="206" selection-end-column="67" />
+            <state relative-caret-position="289">
+              <caret line="190" lean-forward="true" selection-start-line="190" selection-end-line="190" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#300#816#0" />
@@ -207,8 +192,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/particle simulation/vispy_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="206" column="67" lean-forward="true" selection-start-line="206" selection-start-column="67" selection-end-line="206" selection-end-column="67" />
+        <state relative-caret-position="289">
+          <caret line="190" lean-forward="true" selection-start-line="190" selection-end-line="190" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#300#816#0" />

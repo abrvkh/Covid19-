@@ -39,18 +39,15 @@ timestep_end = 1000 #number of timesteps to take
 velocity_scaling = 1 #this is the factor which we multiply with the velocity [-1, 1]
 #infection
 infection_radius = 0.05 #people might get infected when they come within this distance of an infected particle
-infection_probability = 1 #change of getting infected when within the radius
-infection_time = 0.14 #time a person will be infected
+infection_probability = 0.1 #change of getting infected when within the radius
+infection_time = 0.5 #time a person will be infected
 #social distancing
 social_distance_radius = 0 #the radius in which the social distancing kicks in
-social_distance_probability = 0.1 #the probability that a person obeys the social distancing law
+social_distance_probability = 1 #the probability that a person obeys the social distancing law
 social_distancing_percentage = 1 #fraction of people that obeys the social distancing law
-#testing of infected people
-test_percentage = 0 #fraction of people that gets tested and if positive he gets isolated
-test_frequency = 0 # how frequent (in terms of nr of time steps) we test
 #isolation
-isolate_percentage = 0 #fraction of infected that gets isolated
-isolate_time = 0 # time a person walks around before being isolated
+isolation_probability = 0.8 #fraction of infected that gets isolated
+time_before_isolation = 0.2 # time a person walks around before being isolated
 #supermarket
 time_to_go = 0 # how often someone goes to supermarket
 supermarket_percentage = 0 # fraction of people that goes to supermarket
@@ -72,6 +69,7 @@ particle_social_distancing[random.sample(range(0, N), np.int(np.round(social_dis
 for i in range(0, N_infected):
     index = np.random.randint(0, N) #pull a random integer (this represents the index of the infected particle
     particle_infected[index] = 1 #this particle is infected
+particle_isolated = np.zeros(N) #array which indicates if a particle is isolated or not (0=not infected, 1=infected and will be in isolation, 2=infected but will not be isolated, 3=in isolation, 4=out of isolation)
 
 ##############################################PLOTTING################################################################
 plotcounter = 1 #plot every "plotcounter" frames
@@ -86,7 +84,7 @@ view.camera = 'panzoom'
 # add a colored 3D axis for orientation
 axis = visuals.XYZAxis(parent=view.scene)
 #SIR GRAPH
-plotSIR = 0 #(0=not show SIR graph, 1=show SIR graph)
+plotSIR = 1 #(0=not show SIR graph, 1=show SIR graph)
 fig, ax = plt.subplots(1, 1)
 xSIR = np.arange(0, timestep_end+1, 1) #[0, 1, 2, 3, 4, 5, 6, ...]
 yS = np.zeros(timestep_end+1) #number of susceptible people
@@ -97,102 +95,99 @@ yI[0] = N_infected
 yR[0] = N_immune
 
 def update(event):
-    global timestep, particle_infected, particle_pos, particle_social_distancing, particle_vel, particle_infectiontime, particle_shopping, N_infected, N_clean, N_immune #global variables that need to be altered every timestep
+    global timestep, particle_infected, particle_pos, particle_social_distancing, particle_isolated, particle_vel, particle_infectiontime, particle_shopping, N_infected, N_clean, N_immune #global variables that need to be altered every timestep
 
     # NEW POSITIONS
     for i in range(0, N):  # loop over all particles to change position
-        current_pos = particle_pos[i, :]  # position of the particle
-        current_vel = particle_vel[i, :]  # velocity of the particle
-        repulsion_force = np.zeros(2)  # this is the repulsion force
+        if particle_isolated[i]!=3: #check if particle is not in isolation
+            current_pos = particle_pos[i, :]  # position of the particle
+            current_vel = particle_vel[i, :]  # velocity of the particle
+            repulsion_force = np.zeros(2)  # this is the repulsion force
 
-        # new smooth velocity
-        new_vel = randomwalk_step(current_pos, current_vel, dt)
-        # force toward a central position (supermarket)
-        if timestep * dt - particle_shopping[i] > time_to_go:  # if enough time has passed since last time he went shopping
-            if np.random.rand() < supermarket_percentage:  # if this particle is indeed going shopping this time
-                vector = shop_pos - current_pos
-                new_vel = vector  # if its time to go shopping we move targeted towards shop
-        if np.linalg.norm(current_pos - shop_pos, ord=2) < 0.01:  # if he has visited the shop approximately
-            particle_shopping[i] = timestep * dt
+            # new smooth velocity
+            new_vel = randomwalk_step(current_pos, current_vel, dt)
+            # force toward a central position (supermarket)
+            if timestep * dt - particle_shopping[i] > time_to_go:  # if enough time has passed since last time he went shopping
+                if np.random.rand() < supermarket_percentage:  # if this particle is indeed going shopping this time
+                    vector = shop_pos - current_pos
+                    new_vel = vector  # if its time to go shopping we move targeted towards shop
+            if np.linalg.norm(current_pos - shop_pos, ord=2) < 0.01:  # if he has visited the shop approximately
+                particle_shopping[i] = timestep * dt
 
-        # repulsive force (social distancing)
-        if social_distance_radius > 0:
-            if particle_social_distancing[i] == 1:  # check if this particle obeys the social distancing physics
-                if np.random.rand() < social_distance_probability:  # check if he follows the law this time
-                    # his position change would be dt*new_vel, but we need to make sure that this does not bring him closer to any of the other particles
-                    particle_dist = compute_distances(current_pos,
-                                                      particle_pos)  # compute the distance between the current particle and the remaining particles
-                    particle_dist[particle_dist == 0] = L  # set the distance between itself to a large value
-                    close_particles_indices = np.where(particle_dist < social_distance_radius)[0]
-                    for j in close_particles_indices:  # loop over all close particles to add a force
-                        vector = particle_pos[j] - current_pos  # vector of the repulsive force
-                        norm = social_distance_radius * particle_dist[j]  # this is the distance from the particle
-                        repulsion_force -= vector / (norm ** 3)  # why this force?
-                    if np.linalg.norm(repulsion_force, ord=2) > 0:
-                        new_vel += repulsion_force / np.linalg.norm(repulsion_force, ord=2)
+            # repulsive force (social distancing)
+            if social_distance_radius > 0:
+                if particle_social_distancing[i] == 1:  # check if this particle obeys the social distancing physics
+                    if np.random.rand() < social_distance_probability:  # check if he follows the law this time
+                        # his position change would be dt*new_vel, but we need to make sure that this does not bring him closer to any of the other particles
+                        particle_dist = compute_distances(current_pos,
+                                                          particle_pos)  # compute the distance between the current particle and the remaining particles
+                        particle_dist[particle_dist == 0] = L  # set the distance between itself to a large value
+                        close_particles_indices = np.where(particle_dist < social_distance_radius)[0]
+                        for j in close_particles_indices:  # loop over all close particles to add a force
+                            vector = particle_pos[j] - current_pos  # vector of the repulsive force
+                            norm = social_distance_radius * particle_dist[j]  # this is the distance from the particle
+                            repulsion_force -= vector / (norm ** 3)  # why this force?
+                        if np.linalg.norm(repulsion_force, ord=2) > 0:
+                            new_vel += repulsion_force / np.linalg.norm(repulsion_force, ord=2)
 
-        # wall force (keep particles away from the boundaries of the domain)
-        if current_pos[0] < L_repel:
-            new_vel[
-                0] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the x-direction
-        if current_pos[1] < L_repel:
-            new_vel[
-                1] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the y-direction
+            # wall force (keep particles away from the boundaries of the domain)
+            if current_pos[0] < L_repel:
+                new_vel[
+                    0] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the x-direction
+            if current_pos[1] < L_repel:
+                new_vel[
+                    1] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the y-direction
 
-        # check if a particle is close to the top and/or right domain boundary
-        if (L - current_pos[0]) < L_repel:
-            new_vel[
-                0] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative x-direction
-        if (L - current_pos[1]) < L_repel:
-            new_vel[
-                1] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative y-direction
+            # check if a particle is close to the top and/or right domain boundary
+            if (L - current_pos[0]) < L_repel:
+                new_vel[
+                    0] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative x-direction
+            if (L - current_pos[1]) < L_repel:
+                new_vel[
+                    1] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative y-direction
 
-        particle_vel[i, :] = velocity_scaling * new_vel
+            particle_vel[i, :] = velocity_scaling * new_vel #scale the velocity with a maximum velocity
+
     # update particle positions
     particle_pos += dt * particle_vel
     # keep particles inside the domain
-    particle_pos = np.clip(particle_pos, [0, 0], [L, L])
+    particle_pos[particle_isolated!=3] = np.clip(particle_pos[particle_isolated!=3], [0, 0], [L, L])
 
     # NEW INFECTIONS
-    infected_indices = np.where(particle_infected == 1)[0]  # currently infected people
-    for i in range(0, np.size(infected_indices)):
-        infected_pos = particle_pos[infected_indices[i], :]  # this is the current position of the infected particle
-        in_danger_indices = np.where(np.linalg.norm(particle_pos - infected_pos, ord=2, axis=1) < infection_radius)[
-            0]  # find all the particles that are within the infection radius
-        in_danger_indices = in_danger_indices[np.where(particle_infected[in_danger_indices] == 0)[
-            0]]  # remove the indices of particles that are immune or are already infected
-        new_infected_indices = in_danger_indices[np.random.rand(
-            np.size(in_danger_indices)) < infection_probability]  # these are the indices of particles that are infected
+    infected_particles = np.where(particle_infected == 1)[0]  # currently infected people
+    for i in range(0, np.size(infected_particles)): #loop over all infected particles
+        infected_pos = particle_pos[infected_particles[i], :]  # this is the current position of the infected particle
+        in_danger_indices = np.where(np.linalg.norm(particle_pos - infected_pos, ord=2, axis=1) < infection_radius)[0]  # find all the particles that are within the infection radius
+        in_danger_indices = in_danger_indices[np.where(particle_infected[in_danger_indices] == 0)[0]]  # remove the indices of particles that are immune or are already infected
+        new_infected_indices = in_danger_indices[np.random.rand(np.size(in_danger_indices)) < infection_probability]  # these are the indices of particles that are infected
         particle_infected[new_infected_indices] = 1  # set these particles to infected
-        particle_infectiontime[new_infected_indices] = timestep * dt  # set the infection time to the current timelevel
+        particle_infectiontime[new_infected_indices] = timestep * dt  # set the infection starting time to the current timelevel
+        if isolation_probability>0:
+            particle_isolated[new_infected_indices] = np.random.choice([1, 2], np.size(new_infected_indices), p=[isolation_probability, 1-isolation_probability]) #check if particle will get isolated or not
         N_infected += np.size(new_infected_indices)  # update the number of infected people
         N_clean -= np.size(new_infected_indices)  # update the number of clean people
 
     # NEW IMMUNE PEOPLE
-    infected_particles = np.where(particle_infected == 1)[0]
     new_immune_indices = infected_particles[np.where(timestep * dt - particle_infectiontime[infected_particles] > infection_time)[0]]  # these are the infected people that are infected for a while
     particle_infected[new_immune_indices] = 2  # set these particles to immune
     N_infected -= np.size(new_immune_indices)  # update the number of infected people
     N_immune += np.size(new_immune_indices)  # update the number of infected people
 
-    # ISOLATE POSITIVES
-    infected_particles = np.where(particle_infected == 1)[0]
-    positives_tested = np.zeros(N_infected)
-    positives_tested[:int(isolate_percentage * N_infected)] = 1
-    np.random.shuffle(positives_tested)
-    indices_tested = np.where(positives_tested == 1)[0]
-    indices_isolate = np.where(timestep * dt - particle_infectiontime[infected_particles] > isolate_time)[0]
-    to_isolate = infected_particles[np.intersect1d(indices_tested, indices_isolate)]
-    particle_pos[to_isolate, :] = np.ones(2) * -1  # Remove the isolated particle from the system
+    #PATICLES MOVING TO ISOLATION
+    if isolation_probability>0:
+        new_isolations = np.where(particle_isolated == 1)[0]  # particles that eventually need to be isolated
+        new_isolations = new_isolations[np.where(timestep * dt - particle_infectiontime[new_isolations] > time_before_isolation)[0]] #check if the particle needs to be isolated now
+        particle_isolated[new_isolations] = 3 #set the status of the particle to "in isolation"
+        particle_pos[new_isolations] = [-0.3, -0.3] #move the particles to quarantine
+        particle_vel[new_isolations] = [0, 0] #set them to be stationary
 
-    # TEST AN AMOUNT OF CITIZENS, AND ISOLATE POSITIVES (this assumes that we don't always know who has the disease and thus cannot guarantee we are testing only the positive ones)
-    if test_percentage>0:
-        if timestep % test_frequency == 0:
-            tested = np.zeros(N)
-            tested[:int(test_percentage * N)] = 1
-            np.random.shuffle(tested)
-            indices_to_isolate = np.intersect1d(infected_particles,np.where(tested == 1)[0])  # check if this person was actually infected
-            particle_pos[indices_to_isolate, :] = np.ones(2) * -1
+    # PATICLES GOING OUT ISOLATION
+    if isolation_probability > 0:
+        new_isolations = np.where(particle_isolated == 3)[0]  # particles that are in isolation now
+        new_isolations = new_isolations[np.where(timestep * dt - particle_infectiontime[new_isolations] > infection_time)[0]]  # check if the particle needs to be isolated now
+        particle_isolated[new_isolations] = 4  # set the status of the particle to "in isolation"
+        particle_pos[new_isolations] = [L/2, L/2]  # move the particles to quarantine
+        particle_vel[new_isolations] = velocity_scaling*2*(np.random.rand(2)-0.5)  # set them to be stationary
 
     #PLOT NEW PARTICLE POSITIONS
     scatter.set_data(np.concatenate((particle_pos, zero_vector), axis=1), edge_color='white',face_color=color_scheme[particle_infected], size=15)
