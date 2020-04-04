@@ -15,12 +15,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/particle simulation/vispy_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="30" column="6" selection-start-line="30" selection-start-column="6" selection-end-line="30" selection-end-column="6" />
+            <state relative-caret-position="-323">
+              <caret line="116" column="12" selection-start-line="116" selection-start-column="12" selection-end-line="116" selection-end-column="12" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <element signature="e#300#816#0" />
-                <element signature="e#892#951#0" />
               </folding>
             </state>
           </provider>
@@ -38,6 +36,8 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>yS</find>
+      <find>zero_vector</find>
+      <find>zero</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -61,6 +61,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -77,7 +78,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -101,6 +101,9 @@
       <module name="Covid19-" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/particle simulation" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -173,7 +176,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32974428" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="10" visible="true" weight="0.32974428" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -182,7 +185,7 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/particle simulation/particle_simulation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
+        <state relative-caret-position="942">
           <caret line="190" column="4" selection-start-line="190" selection-start-column="4" selection-end-line="193" selection-end-column="21" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -192,12 +195,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/particle simulation/vispy_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="30" column="6" selection-start-line="30" selection-start-column="6" selection-end-line="30" selection-end-column="6" />
+        <state relative-caret-position="-323">
+          <caret line="116" column="12" selection-start-line="116" selection-start-column="12" selection-end-line="116" selection-end-column="12" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <element signature="e#300#816#0" />
-            <element signature="e#892#951#0" />
           </folding>
         </state>
       </provider>

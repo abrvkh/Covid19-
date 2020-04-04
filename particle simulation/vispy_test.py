@@ -40,20 +40,20 @@ velocity_scaling = 1 #this is the factor which we multiply with the velocity [-1
 #infection
 infection_radius = 0.05 #people might get infected when they come within this distance of an infected particle
 infection_probability = 0.1 #chance of getting infected when within the radius
-infection_time = 0.5 #time a person will be infected
+infection_time = 1 #time a person will be infected
 #social distancing
-social_distance_radius = 0.1 #the radius in which the social distancing kicks in
+social_distance_radius = 0 #the radius in which the social distancing kicks in
 social_distance_probability = 1 #the probability that a person obeys the social distancing law
 social_distancing_percentage = 1 #fraction of people that obeys the social distancing law
 #isolation
-isolation_probability = 0 #fraction of infected that gets isolated
+isolation_probability = 0.8 #fraction of infected that gets isolated
 time_before_isolation = 0.2 # time a person walks around before being isolated
 #supermarket
 time_to_go = 100*dt # how often someone goes to supermarket
 supermarket_percentage = 0.01 # fraction of people that goes to supermarket (if not very small then in small timeframe everyone goes shopping)
 
 ####################################INITIALISE PARTICLES############################################################
-zero_vector = np.zeros([N+1, 1]) #this is a vector that is used for plotting the points in a plane in 3D
+zero_vector = np.zeros([N, 1]) #this is a vector that is used for plotting the points in a plane in 3D
 particle_pos = L*np.random.rand(N, 2) #positions
 particle_vel = 2*(np.random.rand(N, 2)-0.5) #movement velocity
 #infection related
@@ -76,15 +76,23 @@ plotcounter = 1 #plot every "plotcounter" frames
 color_scheme = np.array([[0, 0, 1, 0.5], [1, 0, 0, 0.5], [0, 1, 0, 0.5]]) #(clean, infected, immune) particle colours in RGBA format
 #PARTICLE POSITIONS
 canvas = vispy.scene.SceneCanvas(title="Particle positions", keys='interactive', show=True)
+canvas2 = vispy.scene.SceneCanvas(title="Isolated particles", keys='interactive', show=True)
 view = canvas.central_widget.add_view()
-scatter = visuals.Markers()
-scatter.set_data(np.concatenate((np.concatenate((particle_pos,shop_pos[np.newaxis]), axis=0), zero_vector), axis=1), edge_color='white', face_color=np.concatenate((color_scheme[particle_infected],np.array([1,0.5,0,0.5])[np.newaxis]), axis=0), size=np.concatenate((np.ones([N])*15,np.ones([1])*25),axis=0))
+view2 = canvas2.central_widget.add_view()
+scatter = visuals.Markers() #this are the particle positions
+scatter_isolation = visuals.Markers() #these are the isolated partiles
+scatter.set_data(np.concatenate((particle_pos, zero_vector), axis=1), edge_color='white', face_color=color_scheme[particle_infected], size=15*np.ones([N]))
+scatter_isolation.set_data(np.array([[0, 0, 0]]), edge_color=[0, 0, 0, 0], face_color=[0, 0, 0, 0], size=15)
 view.add(scatter)
+view2.add(scatter_isolation)
+if supermarket_percentage>0:
+    scatter_shop = visuals.Markers()  # these are the isolated partiles
+    scatter_shop.set_data(np.array([[shop_pos[0], shop_pos[1], 0]]), edge_color='white', face_color='orange', size=25)
+    view.add(scatter_shop)
 view.camera = 'panzoom'
-# add a colored 3D axis for orientation
-axis = visuals.XYZAxis(parent=view.scene)
+view2.camera = 'panzoom'
 #SIR GRAPH
-plotSIR = 0 #(0=not show SIR graph, 1=show SIR graph)
+plotSIR = 1 #(0=not show SIR graph, 1=show SIR graph)
 fig, ax = plt.subplots(1, 1)
 xSIR = np.arange(0, timestep_end+1, 1) #[0, 1, 2, 3, 4, 5, 6, ...]
 yS = np.zeros(timestep_end+1) #number of susceptible people
@@ -99,20 +107,20 @@ def update(event):
 
     # NEW POSITIONS
     for i in range(0, N):  # loop over all particles to change position
-        if particle_isolated[i]!=3: #check if particle is not in isolation
-            current_pos = particle_pos[i, :]  # position of the particle
-            current_vel = particle_vel[i, :]  # velocity of the particle
+        current_pos = particle_pos[i, :]  # position of the particle
+        current_vel = particle_vel[i, :]  # velocity of the particle
+
+        # new smooth velocity
+        new_vel = randomwalk_step(current_pos, current_vel, dt)
+
+        if particle_isolated[i] != 3:  # check if particle is not in isolation
             repulsion_force = np.zeros(2)  # this is the repulsion force
-
-            # new smooth velocity
-            new_vel = randomwalk_step(current_pos, current_vel, dt)
-
             # repulsive force (social distancing)
             if social_distance_radius > 0:
                 if particle_social_distancing[i] == 1:  # check if this particle obeys the social distancing physics
                     if np.random.rand() < social_distance_probability:  # check if he follows the law this time
                         # his position change would be dt*new_vel, but we need to make sure that this does not bring him closer to any of the other particles
-                        particle_dist = compute_distances(current_pos, particle_pos)  # compute the distance between the current particle and the remaining particles
+                        particle_dist = compute_distances(current_pos, particle_pos[particle_isolated!=3])  # compute the distance between the current particle and the remaining particles
                         particle_dist[particle_dist == 0] = L  # set the distance between itself to a large value
                         close_particles_indices = np.where(particle_dist < social_distance_radius)[0]
                         for j in close_particles_indices:  # loop over all close particles to add a force
@@ -134,31 +142,31 @@ def update(event):
                 vector = shop_pos-current_pos
                 new_vel += vector # if he has just been he gets a force to move away
 
-            # wall force (keep particles away from the boundaries of the domain)
-            if current_pos[0] < L_repel:
-                new_vel[
-                    0] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the x-direction
-            if current_pos[1] < L_repel:
-                new_vel[
-                    1] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the y-direction
+        # wall force (keep particles away from the boundaries of the domain)
+        if current_pos[0] < L_repel:
+            new_vel[
+                0] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the x-direction
+        if current_pos[1] < L_repel:
+            new_vel[
+                1] = 1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the y-direction
 
-            # check if a particle is close to the top and/or right domain boundary
-            if (L - current_pos[0]) < L_repel:
-                new_vel[
-                    0] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative x-direction
-            if (L - current_pos[1]) < L_repel:
-                new_vel[
-                    1] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative y-direction
+        # check if a particle is close to the top and/or right domain boundary
+        if (L - current_pos[0]) < L_repel:
+            new_vel[
+                0] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative x-direction
+        if (L - current_pos[1]) < L_repel:
+            new_vel[
+                1] = -1 * np.random.rand()  # the particle is too close to the left boundary and needs to go in the negative y-direction
 
-            particle_vel[i, :] = velocity_scaling * new_vel #scale the velocity with a maximum velocity
+        particle_vel[i, :] = velocity_scaling * new_vel #scale the velocity with a maximum velocity
 
     # update particle positions
     particle_pos += dt * particle_vel
     # keep particles inside the domain
-    particle_pos[particle_isolated!=3] = np.clip(particle_pos[particle_isolated!=3], [0, 0], [L, L])
+    particle_pos = np.clip(particle_pos, [0, 0], [L, L])
 
     # NEW INFECTIONS
-    infected_particles = np.where(particle_infected == 1)[0]  # currently infected people
+    infected_particles = np.where((particle_infected == 1) & (particle_isolated!=3))[0]  # currently infected people
     for i in range(0, np.size(infected_particles)): #loop over all infected particles
         infected_pos = particle_pos[infected_particles[i], :]  # this is the current position of the infected particle
         in_danger_indices = np.where(np.linalg.norm(particle_pos - infected_pos, ord=2, axis=1) < infection_radius)[0]  # find all the particles that are within the infection radius
@@ -182,8 +190,6 @@ def update(event):
         new_isolations = np.where(particle_isolated == 1)[0]  # particles that eventually need to be isolated
         new_isolations = new_isolations[np.where(timestep * dt - particle_infectiontime[new_isolations] > time_before_isolation)[0]] #check if the particle needs to be isolated now
         particle_isolated[new_isolations] = 3 #set the status of the particle to "in isolation"
-        particle_pos[new_isolations] = [-0.3, -0.3] #move the particles to quarantine
-        particle_vel[new_isolations] = [0, 0] #set them to be stationary
 
     # PATICLES GOING OUT ISOLATION
     if isolation_probability > 0:
@@ -194,7 +200,13 @@ def update(event):
         particle_vel[new_isolations] = velocity_scaling*2*(np.random.rand(2)-0.5)  # give a random velocity
 
     #PLOT NEW PARTICLE POSITIONS
-    scatter.set_data(np.concatenate((np.concatenate((particle_pos,shop_pos[np.newaxis]), axis=0), zero_vector), axis=1), edge_color='white', face_color=np.concatenate((color_scheme[particle_infected],np.array([1,0.5,0,0.5])[np.newaxis]), axis=0), size=np.concatenate((np.ones([N])*15,np.ones([1])*25),axis=0))
+    #plot particles
+    plotted_particles = particle_pos[particle_isolated!=3] #this are the particles that need to be plotted
+    scatter.set_data(np.concatenate((plotted_particles, np.zeros([plotted_particles.shape[0], 1])), axis=1), edge_color='white', face_color=color_scheme[particle_infected[particle_isolated!=3]], size=15*np.ones(plotted_particles.shape[0]))
+    #plot isolated particles
+    if plotted_particles.shape[0]<N: #there are particles in isolation
+        scatter_isolation.set_data(np.concatenate((particle_pos[particle_isolated==3], zero_vector[particle_isolated==3]), axis=1),edge_color='white',face_color=color_scheme[1], size=15)
+
     canvas.title = "Particle positions at t="+str(timestep*dt)
 
     #PLOT SIR GRAPH
