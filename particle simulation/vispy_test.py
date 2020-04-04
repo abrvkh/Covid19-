@@ -28,7 +28,7 @@ def compute_distances(current_pos, positions):
 #domain and timestepping
 L = 1 #domain length and domain height
 L_repel = 0.05 #this is the band in which particles are repelled from the boundary
-N = 500 #population size
+N = 200 #population size
 N_infected = 1 #number of initially infected people (should be smaller than N)
 N_clean = N-N_infected #number of people that did not get the virus yet
 N_immune = 0 #number of people that are immune
@@ -42,11 +42,11 @@ infection_radius = 0.05 #people might get infected when they come within this di
 infection_probability = 0.1 #change of getting infected when within the radius
 infection_time = 0.5 #time a person will be infected
 #social distancing
-social_distance_radius = 0 #the radius in which the social distancing kicks in
+social_distance_radius = 0.1 #the radius in which the social distancing kicks in
 social_distance_probability = 1 #the probability that a person obeys the social distancing law
 social_distancing_percentage = 1 #fraction of people that obeys the social distancing law
 #isolation
-isolation_probability = 0.8 #fraction of infected that gets isolated
+isolation_probability = 0 #fraction of infected that gets isolated
 time_before_isolation = 0.2 # time a person walks around before being isolated
 #supermarket
 time_to_go = 0 # how often someone goes to supermarket
@@ -84,7 +84,7 @@ view.camera = 'panzoom'
 # add a colored 3D axis for orientation
 axis = visuals.XYZAxis(parent=view.scene)
 #SIR GRAPH
-plotSIR = 1 #(0=not show SIR graph, 1=show SIR graph)
+plotSIR = 0 #(0=not show SIR graph, 1=show SIR graph)
 fig, ax = plt.subplots(1, 1)
 xSIR = np.arange(0, timestep_end+1, 1) #[0, 1, 2, 3, 4, 5, 6, ...]
 yS = np.zeros(timestep_end+1) #number of susceptible people

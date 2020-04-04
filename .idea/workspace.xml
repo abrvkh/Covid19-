@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/particle simulation/vispy_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="190" lean-forward="true" selection-start-line="190" selection-end-line="190" />
+            <state relative-caret-position="51">
+              <caret line="30" column="6" selection-start-line="30" selection-start-column="6" selection-end-line="30" selection-end-column="6" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#300#816#0" />
@@ -173,7 +173,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="10" visible="true" weight="0.32974428" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32974428" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -192,8 +192,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/particle simulation/vispy_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="190" lean-forward="true" selection-start-line="190" selection-end-line="190" />
+        <state relative-caret-position="51">
+          <caret line="30" column="6" selection-start-line="30" selection-start-column="6" selection-end-line="30" selection-end-column="6" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#300#816#0" />
