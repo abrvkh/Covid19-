@@ -46,11 +46,12 @@ social_distance_radius = 0 #the radius in which the social distancing kicks in
 social_distance_probability = 1 #the probability that a person obeys the social distancing law
 social_distancing_percentage = 1 #fraction of people that obeys the social distancing law
 #isolation
-isolation_probability = 0.8 #fraction of infected that gets isolated
+isolation_probability = 0 #fraction of infected that gets isolated
 time_before_isolation = 0.2 # time a person walks around before being isolated
 #supermarket
 time_to_go = 100*dt # how often someone goes to supermarket
-supermarket_percentage = 0.01 # fraction of people that goes to supermarket (if not very small then in small timeframe everyone goes shopping)
+supermarket_percentage = 0.05 # fraction of people that goes to supermarket (if not very small then in small timeframe everyone goes shopping)
+time_in_sup = 5
 
 ####################################INITIALISE PARTICLES############################################################
 zero_vector = np.zeros([N, 1]) #this is a vector that is used for plotting the points in a plane in 3D
@@ -60,7 +61,7 @@ particle_vel = 2*(np.random.rand(N, 2)-0.5) #movement velocity
 particle_infected = np.zeros(N, dtype=np.int) #indicates if a particle is infected or not (0=not infected, 1=infected, 2=immune)
 particle_infectiontime = np.zeros(N) #indicates the time of when the particle was infected
 #shopping related
-shop_pos = np.random.uniform(L/4,3*L/4,2)
+shop_pos =  np.random.uniform(L/4,3*L/4,2) #shop location
 particle_shopping = np.zeros(N) #indicates the time of when the particle went shopping last
 #social distancing
 particle_social_distancing = np.zeros(N) #array which indicates if a particle does social distancing (0=no, 1=yes)
@@ -84,9 +85,9 @@ scatter_isolation = visuals.Markers() #these are the isolated partiles
 scatter.set_data(np.concatenate((particle_pos, zero_vector), axis=1), edge_color='white', face_color=color_scheme[particle_infected], size=15*np.ones([N]))
 scatter_isolation.set_data(np.array([[0, 0, 0]]), edge_color=[0, 0, 0, 0], face_color=[0, 0, 0, 0], size=15)
 view.add(scatter)
-view2.add(scatter_isolation)
+view2.add(scatter_isolation) # these are the isolated partiles
 if supermarket_percentage>0:
-    scatter_shop = visuals.Markers()  # these are the isolated partiles
+    scatter_shop = visuals.Markers()
     scatter_shop.set_data(np.array([[shop_pos[0], shop_pos[1], 0]]), edge_color='white', face_color='orange', size=25)
     view.add(scatter_shop)
 view.camera = 'panzoom'
@@ -131,16 +132,21 @@ def update(event):
                             new_vel += repulsion_force / np.linalg.norm(repulsion_force, ord=2)
 
             # force toward a central position (supermarket)
-            if np.random.rand() < supermarket_percentage:  # if this particle is indeed going shopping this time
-                if timestep * dt - particle_shopping[i] > time_to_go:  # if enough time has passed since last time he went shopping
+            time_sup = np.random.normal(time_to_go,1) # pull random number for supermarket time
+            if timestep * dt - particle_shopping[i] > time_sup:  # if enough time has passed since last time he went shopping
+                if np.random.rand() < supermarket_percentage:  # if this particle is indeed going shopping this time
                     vector = shop_pos - current_pos
                     new_vel = 5*vector  # if its time to go shopping we move targeted towards shop
-                    if np.linalg.norm(current_pos - shop_pos, ord=2) < 0.1:  # if he has visited the shop approximately
-                        particle_shopping[i] = timestep * dt
-            # if particle has just been shopping he gets repelled away from supermarket
-            if particle_shopping[i]>0 and particle_shopping[i]%(timestep*dt) == 0:
-                vector = shop_pos-current_pos
-                new_vel += vector # if he has just been he gets a force to move away
+            else:
+                vector = shop_pos - current_pos
+                new_vel -= 0.1*vector #otherwise he stays away from supermarket
+
+            if timestep*dt - particle_shopping[i]>time_sup and np.linalg.norm(current_pos - shop_pos, ord=2) < 0.05:  # if he has visited the shop approximately
+                particle_shopping[i] = timestep * dt
+            if particle_shopping[i]>0 and timestep*dt - particle_shopping[i]< time_in_sup*dt: #make him stand still in the supermarket
+                new_vel = np.zeros(2)
+            elif particle_shopping[i]>0 and timestep*dt - particle_shopping[i]>time_in_sup*dt and timestep*dt - particle_shopping[i]<(time_in_sup+5)*dt: #if he has standed still long enough repell him from supermarket
+                new_vel = 5*randomwalk_step(current_pos, current_vel, dt)
 
         # wall force (keep particles away from the boundaries of the domain)
         if current_pos[0] < L_repel:
